@@ -41,23 +41,36 @@ class Customer(Person):
     def __init__(self, name, phone, email, address):
         super().__init__(name, phone, email, address)
         self.cart = Order()
+        
     def display_info(self):
         pass
     
-    def order_item(self,item_name, menu):
+    def order_item(self,item_name, menu, quantity):
         item = menu.search_item(item_name)
         if item:
-            pass
+            item.quantity = quantity
+            self.cart.add_item_to_cart(item)
+            print("Item added to cart.")
         else:
             print("Item not found.")
+            
+    def view_cart(self):
+        if self.cart:
+            print(f"{'Name':<15}{'Price':<8}{'Quantity':<8}")
+        else:
+            print("Menu is empty.")
+        for item,quantity in self.cart.items.items():
+            print(f"{item.name:<15}{item.price:<8}{quantity:<8}")
             
 class Order:
     def __init__(self):
         self.items = {}
     
     def add_item_to_cart(self, item):
-        pass
-            
+        if item in self.items:
+            self.items[item] += item.quantity
+        else:
+            self.items[item] = item.quantity
 
 class Item:
     def __init__(self, name, price, quantity):
@@ -133,9 +146,9 @@ class Restaurant:
             emp.display_info()
 
 res1 = Restaurant("Star")
-# res1.menu.add_item(Item("Burger", 25, 10))
-# res1.menu.add_item(Item("Burger", 25, 10))
-# res1.menu.add_item(Item("Cola", 5, 50))
+res1.menu.add_item(Item("Burger", 25, 10))
+res1.menu.add_item(Item("Burger", 25, 10))
+res1.menu.add_item(Item("Cola", 5, 50))
 
 # res1.menu.add_item_quantity("Burger", 5)
 # res1.menu.add_item_quantity("Pizza", 5)
@@ -149,3 +162,7 @@ res1.menu.show_items()
 # res1.add_employee(Employee("Sara Ali", "0559876543", "sara@star.com", "Jeddah", 26, "Cashier", 4500))
 
 # res1.show_employees()
+customer1 = Customer("Ahmed Khan", "0501234567", "ahmed@star.com", "Riyadh")
+customer1.order_item('burger',res1.menu,2)
+customer1.view_cart()
+res1.menu.show_items()
