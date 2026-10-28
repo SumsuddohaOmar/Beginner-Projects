@@ -55,8 +55,8 @@ class Customer(Person):
                 print("Invalid Quantity.")
         else:
             print("Item not found.")
-            
-    def remove_order(self,item_name, menu):
+
+    def remove_order(self, item_name, menu):
         item = menu.search_item(item_name)
         if item:
             if item in self.cart.items:
@@ -71,34 +71,42 @@ class Customer(Person):
             print("Cart is empty.")
         for item, quantity in self.cart.items.items():
             print(f"{item.name:<15}{item.price:<8}{quantity:<8}")
-        
+
         print(f"Total Bill : {self.cart.total_price}")
-    
+
     def pay_bill(self, given_bill, menu):
-        for ord_item in self.cart.items:
-            ord_item = menu.search_item(ord_item.name)
-            if ord_item is None:
-                break
-        if ord_item:
-            if given_bill < self.cart.total_price:
-                print(f"Not enough. Your bill is {self.cart.total_price}.")
-            elif given_bill == self.cart.total_price:
-                print(f"Bill paid. Thank you.")
-                self.cart.updating_cart_quantity(ord_item)
-                self.cart.clear_cart()
-            elif given_bill > self.cart.total_price:
-                print(f"Bill paid. {given_bill - self.cart.total_price}, here is your change. Thank You.")
-                self.cart.updating_cart_quantity(ord_item)
-                self.cart.clear_cart()
+        if not self.cart.items:
+            print(f"Cart is empty.")
+            return
         else:
-            print("There is subtle change in menu, Please order again.")
+            for ord_item in self.cart.items:
+                menu_item = menu.search_item(ord_item.name)
+                current = self.cart.items.get(ord_item, 0)
+                if menu_item is None or menu_item.quantity < current:
+                    break
+            if menu_item is not None and menu_item.quantity >= current:
+                if given_bill < self.cart.total_price:
+                    print(f"Not enough. Your bill is {self.cart.total_price}.")
+                elif given_bill == self.cart.total_price:
+                    print(f"Bill paid. Thank you.")
+                    self.cart.updating_cart_quantity()
+                    self.cart.clear_cart()
+                elif given_bill > self.cart.total_price:
+                    print(
+                        f"Bill paid. {given_bill - self.cart.total_price}, here is your change. Thank You."
+                    )
+                    self.cart.updating_cart_quantity()
+                    self.cart.clear_cart()
+            else:
+                print("There is subtle change in menu, Please order again.")
+
 
 class Order:
     def __init__(self):
         self.items = {}
 
     def add_item_to_cart(self, item, quantity):
-        current = self.items.get(item,0)
+        current = self.items.get(item, 0)
         if current + quantity <= item.quantity:
             if item in self.items:
                 self.items[item] += quantity
@@ -110,25 +118,25 @@ class Order:
             print(
                 f"We have only {item.quantity - current}pcs stock for {item.name}. Sorry for the inconvience"
             )
-    def remove_item_from_cart(self,item):
+
+    def remove_item_from_cart(self, item):
         if item in self.items:
             del self.items[item]
             print(f"{item.name} removed from cart.")
         else:
             print(f"{item.name} not added in cart.")
-             
+
     @property
     def total_price(self):
         return sum(item.price * quantity for item, quantity in self.items.items())
-    
-    def updating_cart_quantity(self, item):
+
+    def updating_cart_quantity(self):
         for item in self.items:
-            current = self.items.get(item,0)
-            if current <= item.quantity:
-                item.quantity -= current
-    
+            item.quantity -= self.items[item]
+
     def clear_cart(self):
         self.items = {}
+
 
 class Item:
     def __init__(self, name, price, quantity):
@@ -205,32 +213,61 @@ class Restaurant:
             emp.display_info()
 
 
-res1 = Restaurant("Star")
-res1.menu.add_item(Item("Burger", 25, 10))
-res1.menu.add_item(Item("Burger", 25, 10))
-res1.menu.add_item(Item("Cola", 5, 50))
+# res1 = Restaurant("Star")
+# res1.menu.add_item(Item("Burger", 25, 10))
+# res1.menu.add_item(Item("Burger", 25, 10))
+# res1.menu.add_item(Item("Cola", 5, 50))
 
-# res1.menu.add_item_quantity("Burger", 5)
-# res1.menu.add_item_quantity("Pizza", 5)
-# res1.menu.add_item_quantity("Cola", -3)
+# # res1.menu.add_item_quantity("Burger", 5)
+# # res1.menu.add_item_quantity("Pizza", 5)
+# # res1.menu.add_item_quantity("Cola", -3)
+# # res1.menu.show_items()
+# # res1.menu.delete_item("cola")
 # res1.menu.show_items()
-# res1.menu.delete_item("cola")
-res1.menu.show_items()
 
-# res1.add_employee(Employee("Omar","156465","omar@gmail.com", "saudi", 26, "waiter", 1000))
-# res1.add_employee(Employee("Ahmed Khan", "0501234567", "ahmed@star.com", "Riyadh", 30, "Chef", 6000))
-# res1.add_employee(Employee("Sara Ali", "0559876543", "sara@star.com", "Jeddah", 26, "Cashier", 4500))
+# # res1.add_employee(Employee("Omar","156465","omar@gmail.com", "saudi", 26, "waiter", 1000))
+# # res1.add_employee(Employee("Ahmed Khan", "0501234567", "ahmed@star.com", "Riyadh", 30, "Chef", 6000))
+# # res1.add_employee(Employee("Sara Ali", "0559876543", "sara@star.com", "Jeddah", 26, "Cashier", 4500))
 
-# res1.show_employees()
-customer1 = Customer("Ahmed Khan", "0501234567", "ahmed@star.com", "Riyadh")
-customer1.order_item("burger", res1.menu, 20)
-customer1.order_item("burger", res1.menu, 7)
-customer1.order_item("cola", res1.menu, 4)
-customer1.order_item("burger", res1.menu, 3)
-customer1.order_item("burger", res1.menu, 1)
+# # res1.show_employees()
+# customer1 = Customer("Ahmed Khan", "0501234567", "ahmed@star.com", "Riyadh")
+# customer2 = Customer("Sara Ali", "0559876543", "sara@star.com", "Jeddah")
+# customer1.order_item("burger", res1.menu, 7)
+# customer1.order_item("cola", res1.menu, 4)
+# customer2.order_item("burger", res1.menu, 3)
+# customer1.order_item("burger", res1.menu, 1)
 
 
-customer1.view_cart()
-customer1.pay_bill(270,res1.menu)
-customer1.view_cart()
-res1.menu.show_items()
+# customer1.view_cart()
+# customer2.view_cart()
+# customer1.pay_bill(270,res1.menu)
+# customer2.pay_bill(100,res1.menu)
+# customer1.view_cart()
+# res1.menu.show_items()
+print("\n--- TEST 1: pay twice ---")
+r = Restaurant("T1")
+r.menu.add_item(Item("Burger", 25, 10))
+c = Customer("A", "111", "a@a.com", "x")
+c.order_item("burger", r.menu, 2)
+c.pay_bill(50, r.menu)
+c.pay_bill(100, r.menu)
+r.menu.show_items()
+
+print("\n--- TEST 2: stale item ---")
+r = Restaurant("T2")
+r.menu.add_item(Item("Cola", 5, 50))
+c = Customer("B", "222", "b@b.com", "x")
+c.order_item("cola", r.menu, 4)
+r.menu.delete_item("cola")
+r.menu.add_item(Item("Cola", 8, 50))
+c.pay_bill(100, r.menu)
+r.menu.show_items()
+c.view_cart()
+
+print("\n--- TEST 3: exact stock ---")
+r = Restaurant("T3")
+r.menu.add_item(Item("Burger", 25, 5))
+c = Customer("C", "333", "c@c.com", "x")
+c.order_item("burger", r.menu, 5)
+c.pay_bill(125, r.menu)
+r.menu.show_items()
