@@ -1,8 +1,11 @@
 from menu import Menu
+from db import get_conn
+conn = get_conn()
+
 class Restaurant:
     def __init__(self, name):
         self.name = name
-        self.menu = Menu()
+        self.menu = Menu(conn)
         self.employees = {}
         self.customers = []
 

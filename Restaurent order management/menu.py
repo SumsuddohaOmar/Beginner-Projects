@@ -1,9 +1,11 @@
 from utils import _key
 
 class Menu:
-    def __init__(self):
+    def __init__(self, conn):
         self.items = {}
-
+        self.conn = conn
+        self.cursor = conn.cursor()
+    
     def add_item_quantity(self, item_name, adding_quantity):
         if adding_quantity > 0:
             key = _key(item_name)
@@ -45,9 +47,12 @@ class Menu:
             print("Item Doesn't Exist.")
 
     def show_items(self):
-        if self.items:
-            print(f"{'Name':<15}{'Price':<8}{'Quantity':<8}")
-        else:
-            print("Menu is empty.")
-        for item in self.items.values():
-            print(f"{item.name:<15}{item.price:<8}{item.quantity:<8}")
+        # if self.items:
+        #     print(f"{'Name':<15}{'Price':<8}{'Quantity':<8}")
+        # else:
+        #     print("Menu is empty.")
+        # for item in self.items.values():
+        #     print(f"{item.name:<15}{item.price:<8}{item.quantity:<8}")
+        self.cursor.execute("SELECT name, price, quantity FROM menu")
+        for row in self.cursor.fetchall():
+            print(row)

@@ -9,10 +9,12 @@ class School:
         self.teachers = {}
         self.classrooms = {}
     
-    def add_classroom(self):
-        pass
-    def add_teacher(self):
-        pass
+    def add_classroom(self, classroom):
+        self.classrooms[classroom.name] = classroom
+        
+    def add_teacher(self, subject, teacher):
+        self.teachers[subject] = teacher
+        
     def student_admission(self):
         pass
     def calculate_grade(self, marks):
