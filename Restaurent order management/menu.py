@@ -52,8 +52,12 @@ class Menu:
 
     def delete_item(self, del_item):
         key = _key(del_item)
-        if key in self.items:
-            del self.items[key]
+        self.cursor.execute(
+            "DELETE FROM menu WHERE name = %s",
+            (key,)
+        )
+        self.conn.commit()
+        if self.cursor.rowcount > 0:
             print("Item Removed Successfully.")
         else:
             print("Item Doesn't Exist.")
@@ -62,6 +66,8 @@ class Menu:
         self.cursor.execute("SELECT name, price, quantity FROM menu")
         rows = self.cursor.fetchall()
         if len(rows) > 0:
+            print(f"{"Item name":<15}{"Price":<8}{"Quantity"}")
+            print(f"{"-"*9:<15}{"-"*5:<8}{"-"*8}")
             for row in rows:
                 print(f"{row[0]:<15}{row[1]:<8}{row[2]}")
         else:
