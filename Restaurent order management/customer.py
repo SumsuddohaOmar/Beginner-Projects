@@ -46,7 +46,7 @@ class Customer(Person):
             for ord_item in self.cart.items:
                 menu_item = menu.search_item(ord_item.name)
                 current = self.cart.items.get(ord_item, 0)
-                if menu_item is None or menu_item.price is not ord_item.price:
+                if menu_item is None or menu_item.price != ord_item.price:
                     cart_problem.append((ord_item.name,"Item changed in menu, Please order again."))
                 elif menu_item.quantity < current:
                     cart_problem.append((ord_item.name,f"{ord_item.name} : {menu_item.quantity}pcs left."))
