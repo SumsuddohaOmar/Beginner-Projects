@@ -1,6 +1,4 @@
 from db import get_conn
-conn = get_conn()
-cursor = conn.cursor()
 class Item:
     def __init__(self, name, price, quantity):
         self.name = name
@@ -37,11 +35,14 @@ class Order:
         return sum(item.price * quantity for item, quantity in self.items.items())
 
     def updating_cart_quantity(self):
+        conn = get_conn()
+        cursor = conn.cursor()
         for item in self.items:
             cursor.execute("UPDATE menu SET quantity = quantity - %s WHERE name = %s",
                         (self.items[item],item.name)
             )
         conn.commit()
+        cursor.close()
 
     def clear_cart(self):
         self.items = {}

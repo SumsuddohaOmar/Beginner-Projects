@@ -50,10 +50,11 @@ def admin_menu(restaurant):
     while True:
         print("\n--- Admin Menu ---")
         print("1. Add item")
-        print("2. View items")
-        print("3. Delete item")
-        print("4. Add employee")
-        print("5. View employees")
+        print("2. Add quantity to an existing item")
+        print("3. View items")
+        print("4. Delete item")
+        print("5. Add employee")
+        print("6. View employees")
         print("0. Back")
         choice = input("Choose: ")
 
@@ -63,10 +64,14 @@ def admin_menu(restaurant):
             quantity = int(input("Quantity: "))
             restaurant.menu.add_item(Item(name, price, quantity))
         elif choice == "2":
-            restaurant.menu.show_items()
+            name = input("Item name: ")
+            quantity = int(input("Quantity: "))
+            restaurant.menu.add_item_quantity(name, quantity)
         elif choice == "3":
-            restaurant.menu.delete_item(input("Item name: "))
+            restaurant.menu.show_items()
         elif choice == "4":
+            restaurant.menu.delete_item(input("Item name: "))
+        elif choice == "5":
             name = input("Name: ")
             phone = input("Phone: ")
             email = input("Email: ")
@@ -77,7 +82,7 @@ def admin_menu(restaurant):
             restaurant.add_employee(
                 Employee(name, phone, email, address, age, designation, salary)
             )
-        elif choice == "5":
+        elif choice == "6":
             restaurant.show_employees()
         elif choice == "0":
             break

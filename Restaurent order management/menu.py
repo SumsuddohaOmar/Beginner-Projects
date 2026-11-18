@@ -3,30 +3,34 @@ from order import Item
 import mysql.connector
 from db import get_conn
 conn = get_conn()
-cursor = conn.cursor()
 
 class Menu:
     def add_item_quantity(self, item_name, adding_quantity):
-        if adding_quantity > 0:
-            key = _key(item_name)
-            cursor.execute(
-                "UPDATE menu SET quantity = quantity + %s WHERE name = %s",
-                (adding_quantity,key)
-            )
-            conn.commit()
-            if cursor.rowcount > 0:
-                print("Item Quantity Updated Successfully.")
-            else:   
-                print("Item doesn't exist.")
-        else:
+        if adding_quantity <= 0:
             print("Invalid Quantity.")
+            return
+        key = _key(item_name)
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE menu SET quantity = quantity + %s WHERE name = %s",
+            (adding_quantity,key)
+        )
+        conn.commit()
+        if cursor.rowcount > 0:
+            print("Item Quantity Updated Successfully.")
+        else:   
+            print("Item doesn't exist.")
+        cursor.close()
+            
 
     def search_item(self, item_name):
         key = _key(item_name)
+        cursor = conn.cursor()
         cursor.execute(
             "SELECT name, price, quantity FROM menu WHERE name = %s", (key,)
         )
         row = cursor.fetchone()
+        cursor.close()
         if row is None:
             return None
         else:
@@ -36,6 +40,7 @@ class Menu:
 
     def add_item(self, item):
         key = _key(item.name)
+        cursor = conn.cursor()
         try:
             cursor.execute(
                 "INSERT INTO menu(name,price,quantity) VALUES(%s,%s,%s)",
@@ -47,11 +52,13 @@ class Menu:
             print(
                 "Item Already Exist. Either rename the item name or add the quantity existing name"
             )
+        cursor.close()
 
     # for deleting item
 
     def delete_item(self, del_item):
         key = _key(del_item)
+        cursor = conn.cursor()
         cursor.execute(
             "DELETE FROM menu WHERE name = %s",
             (key,)
@@ -61,8 +68,10 @@ class Menu:
             print("Item Removed Successfully.")
         else:
             print("Item Doesn't Exist.")
+        cursor.close()
 
     def show_items(self):
+        cursor = conn.cursor()
         cursor.execute("SELECT name, price, quantity FROM menu")
         rows = cursor.fetchall()
         if len(rows) > 0:
@@ -72,3 +81,4 @@ class Menu:
                 print(f"{row[0]:<15}{row[1]:<8}{row[2]}")
         else:
             print("Menu is empty.")
+        cursor.close()
