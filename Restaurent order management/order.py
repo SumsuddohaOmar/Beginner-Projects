@@ -16,7 +16,7 @@ class Order:
                 self.items[item] += quantity
                 print(f"{quantity}pcs {item.name} added to cart.")
             else:
-                self.items[item] = quantity
+                self.items[item.name] = (item.name,quantity)
                 print(f"{quantity}pcs {item.name} added to cart.")
         else:
             print(
