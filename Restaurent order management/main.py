@@ -3,7 +3,7 @@ from utils import _key
 from customer import Customer
 from order import Item
 from menu import Menu
-from resturant import Restaurant
+from restaurant import Restaurant
 
 
 def customer_menu(restaurant):
