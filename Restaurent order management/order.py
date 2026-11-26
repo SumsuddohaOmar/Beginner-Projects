@@ -1,4 +1,5 @@
 from db import get_conn
+from utils import _key
 class Item:
     def __init__(self, name, price, quantity):
         self.name = name
@@ -10,13 +11,15 @@ class Order:
         self.items = {}
 
     def add_item_to_cart(self, item, quantity):
-        current = self.items.get(item, 0)
+        item_name = _key(item.name)
+        current = self.items.get(item_name, 0)
         if current + quantity <= item.quantity:
-            if item in self.items:
-                self.items[item] += quantity
+            if item_name in self.items:
+                item,item_quantity = self.items[item_name]
+                self.items[item.name] = (item,item_quantity + quantity)
                 print(f"{quantity}pcs {item.name} added to cart.")
             else:
-                self.items[item] = quantity
+                self.items[item.name] = (item,quantity)
                 print(f"{quantity}pcs {item.name} added to cart.")
         else:
             print(
